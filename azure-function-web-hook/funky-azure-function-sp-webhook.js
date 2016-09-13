@@ -14,6 +14,9 @@ module.exports = function (context, req) {
     var certificate = fs.readFileSync(__dirname + '/funky.pem', { encoding: 'utf8' });
     var authContext = new adal.AuthenticationContext(authorityUrl);
 
+    // 1. http://johnliu.net/blog/2016/5/azure-functions-js-and-app-only-updates-to-sharepoint-online 
+    // 2. http://johnliu.net/blog/2016/9/working-with-sharepoint-webhooks-with-javascript-using-an-azure-function
+
     authContext.acquireTokenWithClientCertificate(resource, clientId, certificate, thumbprint, function (err, tokenResponse) {
         if (err) {
             context.log('well that didn\'t work: ' + err.stack);
