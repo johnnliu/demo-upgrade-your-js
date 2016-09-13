@@ -12,10 +12,6 @@ module.exports = function (context, req) {
     var clientId = process.env['MyClientId'];
     var thumbprint = process.env['MyThumbPrint'];
     var certificate = fs.readFileSync(__dirname + '/funky.pem', { encoding: 'utf8' });
-
-    //context.log(context);
-    //context.log(certificate);
-
     var authContext = new adal.AuthenticationContext(authorityUrl);
 
     authContext.acquireTokenWithClientCertificate(resource, clientId, certificate, thumbprint, function (err, tokenResponse) {
@@ -23,8 +19,7 @@ module.exports = function (context, req) {
             context.log('well that didn\'t work: ' + err.stack);
             context.done();
         } else {
-            //context.log(tokenResponse);
-
+            var accesstoken = tokenResponse.accessToken;
             var options = null;
             var headers = {
                 'Authorization': 'Bearer ' + accesstoken,
@@ -35,9 +30,6 @@ module.exports = function (context, req) {
             if (req.body) {
                 context.log(req.body);
             }
-
-            var accesstoken = tokenResponse.accessToken;
-
             if (req) {
                 if (req.query && req.query.validationtoken) {
                     // if validationtoken is specified in query
@@ -89,8 +81,7 @@ module.exports = function (context, req) {
                 // there really should be a DELETE request to remove the subscription
             }
 
-            // default action.  
-            // create a list item in a different list "Poked"
+            // default action - create a list item in a different list "Poked"
             options = {
                 method: "POST",
                 uri: "https://johnliu365.sharepoint.com/_api/web/lists/getbytitle('Poked')/items",
@@ -107,8 +98,4 @@ module.exports = function (context, req) {
             });
         }
     });
-
-
-
-
 };
